@@ -1,0 +1,120 @@
+<Header.php>
+<?php
+?>
+<head>
+    <link rel="stylesheet" href="css/buscar.css">
+    <meta charset="utf-8">
+</head>
+<header>
+    <nav class="navigation ">
+        <div class="flex-center-logo">
+            <a href="index.php"><img src="src/img/logo.png" width="100px" height="100px"></a>
+            <a href="index.php" class="logo">Whey <span>Market</span></a>
+        </div>
+        <div>
+            <ul class="nav-menu">
+                <i class='bx bx-search'> 
+                    <form action="busca.php" method="post">
+                        <input type="text" name="busca" placeholder="Pesquisar...">
+                        <button type="submit">Pesquisar</button>
+                    </form>
+                </i>
+                <li class="nav-item"><a href="index.php">Home</a></li>
+                <li class="nav-item"><a href="produtos.php">Produtos</a></li>
+                <li class="nav-item"><a href="#">Carrinho</a></li>
+                <li class="nav-item"><a href="loginLojista.php">Área do Lojista</a></li>
+                <?php if (!empty($_SESSION) && isset($_SESSION['Nome'])) : ?>
+                    <li class="nav-item"><span class='text-red'>Ola, <?php echo $_SESSION['Nome'] ?></span></li>
+                    <?php if ($_SESSION['tipoLogin']== 1): ?>
+                    <li class="nav-item "><a href="lojistaPage.php"><span class='text-red'>Pag lojista</span></a></li>
+                    <?php endif ?>
+                    <li class="nav-item"><a href="logout.php">Sair</a></li>
+
+
+                <?php else : ?>
+                    <li class="nav-item"><a href="loginConsumidor.php">Login/Cadastro</a></li>
+                <?php endif; ?>
+            </ul>
+
+
+        </div>
+        <div class="menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+    </nav>
+</header>
+
+<busca.php>
+<?php
+// Conecte-se ao Banco de Dados
+$servername = "localhost:3306";
+$username = "root";
+$password = "";
+$database = "bdwheymarket";
+
+$conn = new mysqli($servername, $username, $password, $database);
+
+// Verifica a conexão
+if($conn->connect_error){
+    die("Conexão Falhou: " . $conn->connect_error);
+}
+
+// Receba o termo de pesquisa do formulário
+$busca = $_POST['busca'];
+
+// Executa a consulta SQL
+$sql = "SELECT * FROM produto WHERE nome LIKE '%$busca%'";
+$result = $conn->querry($sql);
+
+// Exiba os resultados da pesquisa
+if($result->num_rows > 0){
+    while($row = $result->fetch_assoc()){
+        echo "Produto: " .$row['nome'] . '<br>';
+    }
+} else{
+    echo "Não foram encontrados resultados.";
+}
+
+//Feche a conexão com o Banco de Dados
+$conn->close();
+?>
+
+<busca.css>
+form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    max-width: 600px;
+    width: 100%;
+}
+
+input[type="text"]{
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+}
+
+button[type="submit"]{
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+<busca.js>
+function validateForm(){
+    var x = documet.forms["myForm"]["busca"].value;
+    if(x == ""){
+        alert("Por favor, digite um termo de pesquisa");
+        return false;
+    }
+}
